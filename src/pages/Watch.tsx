@@ -12,7 +12,7 @@ import {
 } from "../db/helpers";
 import YouTubePlayer, {
   type YouTubePlayerHandle,
-} from "../components/watch/YoutubePlayer";
+} from "../components/watch/YouTubePlayer";
 import ChapterSidebar from "../components/watch/ChapterSidebar";
 import NewChapterForm from "../components/watch/NewChapterForm";
 
