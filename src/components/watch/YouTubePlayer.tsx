@@ -174,7 +174,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
               }}
               className="text-[#555] hover:text-[#111]"
             >
-              <RotateCw size={16} />
+              {playing ? <Pause size={16} /> : <Play size={16} />}
             </button>
             <button
               onClick={() => setSeekTo(currentTime + 10)}

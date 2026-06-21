@@ -40,9 +40,11 @@ export default function VideoCard({ video, chapterCount, onClick }: Props) {
         <div className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center relative z-10">
           <Play size={14} color="white" fill="white" />
         </div>
-        <span className="absolute bottom-2 right-2 z-10 text-[11px] font-mono text-white bg-black/55 px-[6px] py-[2px] rounded">
-          {formatDuration(video.duration)}
-        </span>
+        {video.duration && (
+          <span className="absolute bottom-2 right-2 z-10 text-[11px] font-mono text-white bg-black/55 px-[6px] py-[2px] rounded">
+            {video.duration ? formatDuration(video.duration) : null}
+          </span>
+        )}
         {video.completed && (
           <span className="absolute top-2 left-2 z-10 text-[10px] font-medium text-[#166534] bg-[#DCFCE7] border border-[#86EFAC] px-2 py-[2px] rounded-full">
             Done

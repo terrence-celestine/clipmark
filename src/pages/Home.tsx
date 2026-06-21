@@ -5,7 +5,8 @@ import type { Collection, Video } from "../types";
 import CategoryStrip from "../components/home/CategoryStrip";
 import VideoCard from "../components/home/VideoCard";
 import ResumeBar from "../components/home/ResumeBar";
-
+import AddVideoModal from "../components/home/AddVideoModal";
+import { Plus } from "lucide-react";
 export default function Home() {
   const navigate = useNavigate();
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -14,7 +15,7 @@ export default function Home() {
     {},
   );
   const [activeFilter, setActiveFilter] = useState("all");
-
+  const [showAddModal, setShowAddModal] = useState(false);
   useEffect(() => {
     getCollections().then(setCollections);
     getVideos().then(async (videos) => {
@@ -30,6 +31,11 @@ export default function Home() {
       );
       setChapterCounts(counts);
     });
+  }, []);
+
+  useEffect(() => {
+    getCollections().then(setCollections);
+    refreshVideos();
   }, []);
 
   const resumeVideo = videos.find(
@@ -48,6 +54,21 @@ export default function Home() {
     return true;
   });
 
+  const refreshVideos = async () => {
+    const vids = await getVideos();
+    setVideos(vids);
+    const counts: Record<number, number> = {};
+    await Promise.all(
+      vids.map(async (v) => {
+        if (v.id) {
+          const chapters = await getChaptersByVideo(v.id);
+          counts[v.id] = chapters.length;
+        }
+      }),
+    );
+    setChapterCounts(counts);
+  };
+
   return (
     <div className="flex flex-col flex-1">
       <div className="bg-white border-b border-[#EFEFEF] px-5 pt-5">
@@ -62,6 +83,13 @@ export default function Home() {
               marked
             </p>
           </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 text-[12px] font-medium text-white bg-[#4F46E5] rounded-[7px] px-3 py-[7px] hover:bg-[#4338CA]"
+          >
+            <Plus size={13} />
+            Add video
+          </button>
         </div>
         <CategoryStrip
           collections={collections}
@@ -86,6 +114,12 @@ export default function Home() {
           ))}
         </div>
       </div>
+      {showAddModal && (
+        <AddVideoModal
+          onClose={() => setShowAddModal(false)}
+          onAdded={refreshVideos}
+        />
+      )}
     </div>
   );
 }
