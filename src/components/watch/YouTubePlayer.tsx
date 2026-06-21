@@ -216,7 +216,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
 
             <button
               onClick={handleSpeedChange}
-              className="text-[11px] font-mono text-[#666] bg-[#F5F5F5] border border-[#E8E8E8] px-[5px] py-[1px] rounded hover:bg-[#EBEBEB] transition-colors"
+              className="text-[11px] font-mono text-[#666] bg-[#F5F5F5] border border-[#E8E8E8] px-[5px] py-px rounded hover:bg-[#EBEBEB] transition-colors"
             >
               {speed}×
             </button>
