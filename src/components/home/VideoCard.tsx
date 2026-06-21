@@ -1,10 +1,22 @@
-import { Bookmark, MoreHorizontal, Play } from "lucide-react";
-import type { Video } from "../../types";
+import {
+  Bookmark,
+  CheckCircle,
+  ChevronRight,
+  Circle,
+  Folder,
+  MoreHorizontal,
+  Play,
+} from "lucide-react";
+import type { Collection, Video } from "../../types";
+import { useState } from "react";
 
 interface Props {
   video: Video;
   chapterCount: number;
+  collections: Collection[];
+  onMoveToCollection: (collectionId: number | undefined) => void;
   onClick: () => void;
+  onToggleComplete: () => void;
 }
 
 const THUMB_COLORS: Record<number, string> = {
@@ -16,10 +28,18 @@ const THUMB_COLORS: Record<number, string> = {
   5: "#1a1207",
 };
 
-export default function VideoCard({ video, chapterCount, onClick }: Props) {
+export default function VideoCard({
+  video,
+  chapterCount,
+  onClick,
+  onToggleComplete,
+  collections,
+  onMoveToCollection,
+}: Props) {
   const colorIndex = video.id ? video.id % 6 : 0;
   const bgColor = THUMB_COLORS[colorIndex];
-
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showCollections, setShowCollections] = useState(false);
   return (
     <div
       onClick={onClick}
@@ -63,12 +83,85 @@ export default function VideoCard({ video, chapterCount, onClick }: Props) {
               <Bookmark size={10} />
               {chapterCount}
             </span>
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="text-[#CCC] hover:text-[#888] hover:bg-[#F5F5F5] rounded p-[2px] transition-colors"
-            >
-              <MoreHorizontal size={14} />
-            </button>
+            <div className="relative">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen((m) => !m);
+                }}
+                className="text-[#CCC] hover:text-[#888] hover:bg-[#F5F5F5] rounded p-[2px] transition-colors"
+              >
+                <MoreHorizontal size={14} />
+              </button>
+
+              {menuOpen && (
+                <div
+                  className="absolute right-0 bottom-7 bg-white border border-[#E8E8E8] rounded-[8px] shadow-sm py-1 w-[160px] z-10"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    onClick={() => {
+                      onToggleComplete();
+                      setMenuOpen(false);
+                    }}
+                    className="w-full text-left text-[12px] text-[#444] px-3 py-[7px] hover:bg-[#F5F5F5] flex items-center gap-2"
+                  >
+                    {video.completed ? (
+                      <>
+                        <Circle size={13} /> Mark as unwatched
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle size={13} color="#22C55E" /> Mark as
+                        completed
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setShowCollections((s) => !s)}
+                    className="w-full text-left text-[12px] text-[#444] px-3 py-[7px] hover:bg-[#F5F5F5] flex items-center justify-between gap-2"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Folder size={13} />
+                      Add to collection
+                    </span>
+                    <ChevronRight size={12} color="#CCC" />
+                  </button>
+
+                  {showCollections && (
+                    <div className="border-t border-[#F0F0F0] mt-1 pt-1">
+                      <button
+                        onClick={() => {
+                          onMoveToCollection(undefined);
+                          setMenuOpen(false);
+                          setShowCollections(false);
+                        }}
+                        className="w-full text-left text-[12px] text-[#888] px-3 py-[6px] hover:bg-[#F5F5F5]"
+                      >
+                        No collection
+                      </button>
+                      {collections.map((c) => (
+                        <button
+                          key={c.id}
+                          onClick={() => {
+                            onMoveToCollection(c.id);
+                            setMenuOpen(false);
+                            setShowCollections(false);
+                          }}
+                          className="w-full text-left text-[12px] text-[#444] px-3 py-[6px] hover:bg-[#F5F5F5] flex items-center gap-2"
+                        >
+                          <div
+                            className="w-2 h-2 rounded-full"
+                            style={{ background: c.color }}
+                          />
+                          {c.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCollections, getVideos, getChaptersByVideo } from "../db/helpers";
+import {
+  getCollections,
+  getVideos,
+  getChaptersByVideo,
+  updateVideo,
+} from "../db/helpers";
 import type { Collection, Video } from "../types";
 import CategoryStrip from "../components/home/CategoryStrip";
 import VideoCard from "../components/home/VideoCard";
@@ -16,6 +21,7 @@ export default function Home() {
   );
   const [activeFilter, setActiveFilter] = useState("all");
   const [showAddModal, setShowAddModal] = useState(false);
+
   useEffect(() => {
     getCollections().then(setCollections);
     getVideos().then(async (videos) => {
@@ -67,6 +73,21 @@ export default function Home() {
       }),
     );
     setChapterCounts(counts);
+  };
+
+  const handleToggleComplete = async (video: Video) => {
+    if (!video.id) return;
+    await updateVideo(video.id, { completed: !video.completed });
+    refreshVideos();
+  };
+
+  const handleMoveToCollection = async (
+    video: Video,
+    collectionId: number | undefined,
+  ) => {
+    if (!video.id) return;
+    await updateVideo(video.id, { collectionId });
+    refreshVideos();
   };
 
   return (
@@ -129,7 +150,12 @@ export default function Home() {
                 key={video.id}
                 video={video}
                 chapterCount={video.id ? (chapterCounts[video.id] ?? 0) : 0}
+                collections={collections}
+                onMoveToCollection={(collectionId) =>
+                  handleMoveToCollection(video, collectionId)
+                }
                 onClick={() => navigate(`/watch/${video.youtubeId}`)}
+                onToggleComplete={() => handleToggleComplete(video)}
               />
             ))}
           </div>
