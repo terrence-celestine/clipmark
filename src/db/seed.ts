@@ -109,5 +109,8 @@ export const seedDatabase = async () => {
       note: "The classic trap with setInterval",
       createdAt: Date.now(),
     },
+    {
+        
+    }
   ]);
 };
