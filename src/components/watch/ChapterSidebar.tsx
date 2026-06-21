@@ -102,7 +102,7 @@ export default function ChapterSidebar({
             >
               <div className="flex flex-col items-center gap-1 pt-[2px]">
                 <div
-                  className={`w-[18px] h-[18px] rounded-full border flex items-center justify-center flex-shrink-0 text-[9px] font-medium ${
+                  className={`w-[18px] h-[18px] rounded-full border flex items-center justify-center shrink-0 text-[9px] font-medium ${
                     isWatched
                       ? "bg-[#4F46E5] border-[#4F46E5] text-white"
                       : isActive

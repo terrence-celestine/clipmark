@@ -13,7 +13,6 @@ import {
   useImperativeHandle,
   forwardRef,
   useRef,
-  useEffect,
 } from "react";
 
 interface Props {
@@ -53,7 +52,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
     const playerRef = useRef<HTMLVideoElement>(null);
     const [playing, setPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(startAt ?? 0);
-    const [seekTo, setSeekTo] = useState<number | undefined>(undefined);
+    const [_, setSeekTo] = useState<number | undefined>(undefined);
     const [totalDuration, setTotalDuration] = useState(duration);
 
     useImperativeHandle(ref, () => ({

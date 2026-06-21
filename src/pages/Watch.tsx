@@ -125,7 +125,7 @@ export default function Watch() {
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden h-[calc(100vh-52px)]">
-      <div className="h-[44px] flex items-center px-5 gap-2 bg-white border-b border-[#EFEFEF] flex-shrink-0">
+      <div className="h-[44px] flex items-center px-5 gap-2 bg-white border-b border-[#EFEFEF] shrink-0">
         <Link to="/" className="text-[12px] text-[#6366F1] hover:underline">
           Library
         </Link>

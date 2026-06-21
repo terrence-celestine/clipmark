@@ -48,7 +48,7 @@ export default function CategoryStrip({
         <button
           key={filter.id}
           onClick={() => onChange(filter.id)}
-          className={`flex flex-col items-center gap-[6px] px-4 py-[10px] border rounded-[10px] cursor-pointer min-w-[72px] flex-shrink-0 transition-colors ${
+          className={`flex flex-col items-center gap-[6px] px-4 py-[10px] border rounded-[10px] cursor-pointer min-w-[72px] shrink-0 transition-colors ${
             active === filter.id
               ? "border-[#4F46E5] bg-[#EEF2FF]"
               : "border-[#EBEBEB] bg-white hover:border-[#C7D2FE] hover:bg-[#F5F3FF]"

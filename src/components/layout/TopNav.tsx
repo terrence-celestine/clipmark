@@ -11,8 +11,8 @@ export default function TopNav() {
   const { pathname } = useLocation();
 
   return (
-    <nav className="h-[52px] flex items-center px-5 border-b border-[#EFEFEF] bg-white gap-3 flex-shrink-0">
-      <Link to="/" className="flex items-center gap-2 mr-6 flex-shrink-0">
+    <nav className="h-[52px] flex items-center px-5 border-b border-[#EFEFEF] bg-white gap-3 shrink-0">
+      <Link to="/" className="flex items-center gap-2 mr-6 shrink-0">
         <div className="w-[26px] h-[26px] bg-[#4F46E5] rounded-[7px] flex items-center justify-center">
           <Bookmark size={13} color="white" />
         </div>

@@ -1,5 +1,5 @@
 import { db } from "./index";
-import type { Collection, Video, Chapter } from "../types";
+import type { Video, Chapter } from "../types";
 
 // Collections
 export const getCollections = () =>
