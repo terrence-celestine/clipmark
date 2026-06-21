@@ -1,26 +1,65 @@
 import { useState, useEffect } from "react";
-import { getCollections } from "../db/helpers";
-import type { Collection } from "../types";
+import { useNavigate } from "react-router-dom";
+import { getCollections, getVideos, getChaptersByVideo } from "../db/helpers";
+import type { Collection, Video } from "../types";
 import CategoryStrip from "../components/home/CategoryStrip";
+import VideoCard from "../components/home/VideoCard";
+import ResumeBar from "../components/home/ResumeBar";
 
 export default function Home() {
+  const navigate = useNavigate();
   const [collections, setCollections] = useState<Collection[]>([]);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [chapterCounts, setChapterCounts] = useState<Record<number, number>>(
+    {},
+  );
   const [activeFilter, setActiveFilter] = useState("all");
 
   useEffect(() => {
     getCollections().then(setCollections);
+    getVideos().then(async (videos) => {
+      setVideos(videos);
+      const counts: Record<number, number> = {};
+      await Promise.all(
+        videos.map(async (v) => {
+          if (v.id) {
+            const chapters = await getChaptersByVideo(v.id);
+            counts[v.id] = chapters.length;
+          }
+        }),
+      );
+      setChapterCounts(counts);
+    });
   }, []);
 
+  const resumeVideo = videos.find(
+    (v) => !v.completed && (v.lastTimestamp ?? 0) > 0,
+  );
+
+  const filteredVideos = videos.filter((v) => {
+    if (activeFilter === "all") return true;
+    if (activeFilter === "in-progress")
+      return !v.completed && (v.lastTimestamp ?? 0) > 0;
+    if (activeFilter === "completed") return v.completed;
+    if (activeFilter.startsWith("collection-")) {
+      const id = parseInt(activeFilter.replace("collection-", ""));
+      return v.collectionId === id;
+    }
+    return true;
+  });
+
   return (
-    <div className="flex flex-col flex-1 px-5 pt-5">
-      <div className="bg-white border-b border-[#EFEFEF] -mx-5 px-5 pb-0">
+    <div className="flex flex-col flex-1">
+      <div className="bg-white border-b border-[#EFEFEF] px-5 pt-5">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-[16px] font-medium text-[#111]">
               Your library
             </h1>
             <p className="text-[12px] text-[#999] mt-[2px]">
-              0 videos · 0 chapters marked
+              {videos.length} videos ·{" "}
+              {Object.values(chapterCounts).reduce((a, b) => a + b, 0)} chapters
+              marked
             </p>
           </div>
         </div>
@@ -29,6 +68,23 @@ export default function Home() {
           active={activeFilter}
           onChange={setActiveFilter}
         />
+      </div>
+
+      <div className="flex-1 px-5 pt-5">
+        {resumeVideo && activeFilter === "all" && (
+          <ResumeBar video={resumeVideo} />
+        )}
+
+        <div className="grid grid-cols-3 gap-4">
+          {filteredVideos.map((video) => (
+            <VideoCard
+              key={video.id}
+              video={video}
+              chapterCount={video.id ? (chapterCounts[video.id] ?? 0) : 0}
+              onClick={() => navigate(`/watch/${video.youtubeId}`)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
