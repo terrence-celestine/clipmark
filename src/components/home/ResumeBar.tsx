@@ -16,13 +16,13 @@ export default function ResumeBar({ video }: Props) {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white border border-[#E0E7FF] rounded-[10px] px-4 py-3 flex items-center gap-3 mb-4">
+    <div className="bg-white border border-[#E0E7FF] rounded-[10px] px-3 md:px-4 py-3 flex items-center gap-3 mb-4">
       <div
-        className="w-[68px] h-10 rounded-md flex items-center justify-center shrink-0"
+        className="w-[56px] md:w-[68px] h-9 md:h-10 rounded-md flex items-center justify-center flex-shrink-0"
         style={{ background: "#1e1b4b" }}
       >
         <div className="w-5 h-5 rounded-full border border-white/40 flex items-center justify-center">
-          <Play size={14} color="white" fill="white" />
+          <Play size={8} color="white" fill="white" />
         </div>
       </div>
 
@@ -40,10 +40,10 @@ export default function ResumeBar({ video }: Props) {
 
       <button
         onClick={() => navigate(`/watch/${video.youtubeId}`)}
-        className="flex items-center gap-[5px] text-[12px] font-medium text-[#4F46E5] bg-[#EEF2FF] border border-[#C7D2FE] rounded-[7px] px-3 py-[6px] shrink-0 hover:bg-[#E0E7FF] transition-colors"
+        className="flex items-center gap-[5px] text-[11px] md:text-[12px] font-medium text-[#4F46E5] bg-[#EEF2FF] border border-[#C7D2FE] rounded-[7px] px-2 md:px-3 py-[6px] shrink-0 hover:bg-[#E0E7FF] transition-colors"
       >
-        <PlayCircle size={14} />
-        Resume
+        <PlayCircle size={13} />
+        <span className="hidden md:inline">Resume</span>
       </button>
     </div>
   );

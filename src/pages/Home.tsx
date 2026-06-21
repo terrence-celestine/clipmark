@@ -114,7 +114,7 @@ export default function Home() {
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 text-[12px] font-medium text-white bg-[#4F46E5] rounded-[7px] px-3 py-[7px] hover:bg-[#4338CA]"
+            className="hidden md:flex items-center gap-2 text-[12px] font-medium text-white bg-[#4F46E5] rounded-[7px] px-3 py-[7px] hover:bg-[#4338CA]"
           >
             <Plus size={13} />
             Add video
@@ -158,7 +158,7 @@ export default function Home() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
             {filteredVideos.map((video) => (
               <VideoCard
                 key={video.id}

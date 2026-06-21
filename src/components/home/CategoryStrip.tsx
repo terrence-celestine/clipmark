@@ -1,10 +1,4 @@
-import {
-  LayoutGrid,
-  PlayCircle,
-  CheckCircle,
-  Folder,
-  Plus,
-} from "lucide-react";
+import { LayoutGrid, PlayCircle, CheckCircle, Plus } from "lucide-react";
 import type { Collection } from "../../types";
 
 interface Props {
@@ -14,17 +8,9 @@ interface Props {
 }
 
 const staticFilters = [
-  { id: "all", label: "All", icon: <LayoutGrid size={18} color="#4F46E5" /> },
-  {
-    id: "in-progress",
-    label: "In progress",
-    icon: <PlayCircle size={18} color="#6366F1" />,
-  },
-  {
-    id: "completed",
-    label: "Completed",
-    icon: <CheckCircle size={18} color="#22C55E" />,
-  },
+  { id: "all", label: "All", icon: <LayoutGrid size={13} /> },
+  { id: "in-progress", label: "In progress", icon: <PlayCircle size={13} /> },
+  { id: "completed", label: "Completed", icon: <CheckCircle size={13} /> },
 ];
 
 export default function CategoryStrip({
@@ -37,31 +23,30 @@ export default function CategoryStrip({
     ...collections.map((c) => ({
       id: `collection-${c.id}`,
       label: c.name,
-      icon: <Folder size={18} color={c.color} />,
+      icon: (
+        <div
+          className="w-[7px] h-[7px] rounded-full shrink-0"
+          style={{ background: c.color }}
+        />
+      ),
     })),
-    { id: "new", label: "New", icon: <Plus size={18} color="#BBB" /> },
+    { id: "new", label: "New", icon: <Plus size={13} /> },
   ];
 
   return (
-    <div className="flex items-start gap-2 overflow-x-auto pb-4 pt-1">
+    <div className="flex gap-2 overflow-x-auto pb-[1px] scrollbar-none md:flex-wrap">
       {allFilters.map((filter) => (
         <button
           key={filter.id}
           onClick={() => onChange(filter.id)}
-          className={`flex flex-col items-center gap-[6px] px-4 py-[10px] border rounded-[10px] cursor-pointer min-w-[72px] shrink-0 transition-colors ${
+          className={`flex items-center gap-[5px] px-3 py-[6px] rounded-full border text-[12px] shrink-0 transition-colors ${
             active === filter.id
-              ? "border-[#4F46E5] bg-[#EEF2FF]"
-              : "border-[#EBEBEB] bg-white hover:border-[#C7D2FE] hover:bg-[#F5F3FF]"
+              ? "bg-[#EEF2FF] border-[#C7D2FE] text-[#4338CA] font-medium"
+              : "border-[#E8E8E8] bg-white text-[#666] hover:border-[#C7D2FE] hover:bg-[#F5F3FF]"
           }`}
         >
           {filter.icon}
-          <span
-            className={`text-[11px] font-medium text-center leading-tight whitespace-nowrap ${
-              active === filter.id ? "text-[#4338CA]" : "text-[#444]"
-            }`}
-          >
-            {filter.label}
-          </span>
+          {filter.label}
         </button>
       ))}
     </div>
