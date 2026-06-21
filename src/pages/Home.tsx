@@ -12,6 +12,8 @@ import VideoCard from "../components/home/VideoCard";
 import ResumeBar from "../components/home/ResumeBar";
 import AddVideoModal from "../components/home/AddVideoModal";
 import { Bookmark, Plus } from "lucide-react";
+import AddCollectionModal from "../components/home/AddCollectionModal";
+
 export default function Home() {
   const navigate = useNavigate();
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -21,6 +23,7 @@ export default function Home() {
   );
   const [activeFilter, setActiveFilter] = useState("all");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddCollection, setShowAddCollection] = useState(false);
 
   useEffect(() => {
     getCollections().then(setCollections);
@@ -43,6 +46,11 @@ export default function Home() {
     getCollections().then(setCollections);
     refreshVideos();
   }, []);
+
+  const refreshCollections = async () => {
+    const cols = await getCollections();
+    setCollections(cols);
+  };
 
   const resumeVideo = videos.find(
     (v) => !v.completed && (v.lastTimestamp ?? 0) > 0,
@@ -115,7 +123,13 @@ export default function Home() {
         <CategoryStrip
           collections={collections}
           active={activeFilter}
-          onChange={setActiveFilter}
+          onChange={(value) => {
+            if (value === "new") {
+              setShowAddCollection(true);
+            } else {
+              setActiveFilter(value);
+            }
+          }}
         />
       </div>
 
@@ -165,6 +179,15 @@ export default function Home() {
         <AddVideoModal
           onClose={() => setShowAddModal(false)}
           onAdded={refreshVideos}
+        />
+      )}
+      {showAddCollection && (
+        <AddCollectionModal
+          onClose={() => setShowAddCollection(false)}
+          onAdded={() => {
+            refreshCollections();
+            setShowAddCollection(false);
+          }}
         />
       )}
     </div>
