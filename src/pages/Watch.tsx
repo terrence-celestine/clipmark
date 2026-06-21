@@ -118,6 +118,15 @@ export default function Watch() {
     [],
   );
 
+  const handleDurationLoad = useCallback(
+    async (duration: number) => {
+      if (!video?.id || video.duration > 0) return;
+      await updateVideo(video.id, { duration });
+      setVideo((v) => (v ? { ...v, duration } : v));
+    },
+    [video],
+  );
+
   if (!video) return <div className="p-8 text-[#999]">Loading...</div>;
 
   return (
@@ -158,6 +167,7 @@ export default function Watch() {
             chapterTimestamps={chapterTimestamps}
             onTimeUpdate={handleTimeUpdate}
             onMarkChapter={handleMarkChapter}
+            onDurationLoad={handleDurationLoad}
             ref={playerRef}
           />
           <div className="px-4 py-3 bg-white border-t border-[#EFEFEF] hidden md:block">

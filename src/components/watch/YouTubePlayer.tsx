@@ -22,6 +22,7 @@ interface Props {
   onMarkChapter: (time: number) => void;
   chapterTimestamps: number[];
   duration: number;
+  onDurationLoad?: (duration: number) => void;
 }
 
 export interface YouTubePlayerHandle {
@@ -46,6 +47,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
       onMarkChapter,
       chapterTimestamps,
       duration,
+      onDurationLoad,
     },
     ref,
   ) {
@@ -107,9 +109,11 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
             src={`https://www.youtube.com/watch?v=${videoId}`}
             playing={playing}
             onTimeUpdate={handleProgress}
-            onDurationChange={(e) =>
-              setTotalDuration((e.target as HTMLVideoElement).duration)
-            }
+            onDurationChange={(e) => {
+              const d = Math.floor((e.target as HTMLVideoElement).duration);
+              setTotalDuration(d);
+              onDurationLoad?.(d);
+            }}
             onPlay={() => setPlaying(true)}
             onPause={() => setPlaying(false)}
             width="100%"

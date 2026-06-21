@@ -45,13 +45,6 @@ export default function TopNav() {
           <button className="w-[30px] h-[30px] rounded-[7px] border border-[#E8E8E8] flex items-center justify-center text-[#888] md:hidden">
             <Search size={15} />
           </button>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="hidden md:flex items-center gap-2 text-[12px] font-medium text-white bg-[#4F46E5] rounded-[7px] px-3 py-[7px] hover:bg-[#4338CA]"
-          >
-            <Plus size={13} />
-            Add video
-          </button>
         </div>
       </nav>
 

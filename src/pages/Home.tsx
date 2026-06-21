@@ -100,8 +100,8 @@ export default function Home() {
 
   return (
     <div className="flex flex-col flex-1">
-      <div className="bg-white border-b border-[#EFEFEF] px-5 pt-5">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white border-b border-[#EFEFEF] px-5 pt-5 pb-5">
+        <div className="flex items-center justify-between mt-4">
           <div>
             <h1 className="text-[16px] font-medium text-[#111]">
               Your library
