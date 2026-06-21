@@ -8,6 +8,7 @@ import {
   updateVideo,
   addChapter,
   deleteChapter,
+  updateChapter,
 } from "../db/helpers";
 import YouTubePlayer, {
   type YouTubePlayerHandle,
@@ -22,7 +23,7 @@ export default function Watch() {
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [currentTime, setCurrentTime] = useState(0);
   const [pendingTimestamp, setPendingTimestamp] = useState<number | null>(null);
-  const [_, setEditingChapter] = useState<Chapter | null>(null);
+  const [editingChapter, setEditingChapter] = useState<Chapter | null>(null);
 
   const playerRef = useRef<YouTubePlayerHandle>(null);
   const seekTo = useCallback((seconds: number) => {
@@ -105,6 +106,16 @@ export default function Watch() {
     refreshChapters();
   };
 
+  const handleEditChapter = useCallback(
+    async (chapter: Chapter, title: string, note: string) => {
+      if (!chapter.id) return;
+      await updateChapter(chapter.id, { title, note });
+      setEditingChapter(null);
+      refreshChapters();
+    },
+    [],
+  );
+
   const chapterTimestamps = useMemo(
     () => chapters.map((c) => c.timestamp),
     [chapters],
@@ -160,9 +171,20 @@ export default function Watch() {
               duration={video.duration}
               onSeek={(timestamp) => seekTo(timestamp)}
               onDelete={handleDeleteChapter}
-              onEdit={setEditingChapter}
+              onEdit={(chapter) => setEditingChapter(chapter)}
             />
           </div>
+          {editingChapter && (
+            <NewChapterForm
+              timestamp={editingChapter.timestamp}
+              initialTitle={editingChapter.title}
+              initialNote={editingChapter.note ?? ""}
+              onSave={(title, note) =>
+                handleEditChapter(editingChapter, title, note)
+              }
+              onCancel={() => setEditingChapter(null)}
+            />
+          )}
           {pendingTimestamp !== null && (
             <NewChapterForm
               timestamp={pendingTimestamp}

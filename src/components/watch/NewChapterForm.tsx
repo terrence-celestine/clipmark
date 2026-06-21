@@ -3,6 +3,8 @@ import { Clock } from "lucide-react";
 
 interface Props {
   timestamp: number;
+  initialTitle?: string;
+  initialNote?: string;
   onSave: (title: string, note: string) => void;
   onCancel: () => void;
 }
@@ -16,9 +18,15 @@ function formatTime(seconds: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-export default function NewChapterForm({ timestamp, onSave, onCancel }: Props) {
-  const [title, setTitle] = useState("");
-  const [note, setNote] = useState("");
+export default function NewChapterForm({
+  timestamp,
+  initialTitle,
+  initialNote,
+  onSave,
+  onCancel,
+}: Props) {
+  const [title, setTitle] = useState(initialTitle ?? "");
+  const [note, setNote] = useState(initialNote ?? "");
 
   const handleSave = () => {
     if (!title.trim()) return;
