@@ -25,6 +25,29 @@ export default function Home() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showAddCollection, setShowAddCollection] = useState(false);
 
+  const emptyState = {
+    all: {
+      title: "No videos yet",
+      description:
+        "Add a YouTube video to start marking chapters and taking notes",
+    },
+    "in-progress": {
+      title: "Nothing in progress",
+      description: "Videos you've started watching will appear here",
+    },
+    completed: {
+      title: "No completed videos",
+      description: "Mark a video as completed and it will show up here",
+    },
+  };
+
+  const currentEmpty = activeFilter.startsWith("collection-")
+    ? {
+        title: "No videos in this collection",
+        description: "Add a video and assign it to this collection",
+      }
+    : (emptyState[activeFilter as keyof typeof emptyState] ?? emptyState.all);
+
   useEffect(() => {
     getCollections().then(setCollections);
     getVideos().then(async (videos) => {
@@ -144,18 +167,20 @@ export default function Home() {
               <Bookmark size={24} color="#4F46E5" />
             </div>
             <h2 className="text-[15px] font-medium text-[#111] mb-2">
-              No videos yet
+              {currentEmpty.title}
             </h2>
             <p className="text-[13px] text-[#999] mb-5 max-w-[260px]">
-              Add a YouTube video to start marking chapters and taking notes
+              {currentEmpty.description}
             </p>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 text-[12px] font-medium text-white bg-[#4F46E5] rounded-[7px] px-4 py-[8px] hover:bg-[#4338CA]"
-            >
-              <Plus size={13} />
-              Add your first video
-            </button>
+            {activeFilter === "all" && (
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="flex items-center gap-2 text-[12px] font-medium text-white bg-[#4F46E5] rounded-[7px] px-4 py-[8px] hover:bg-[#4338CA]"
+              >
+                <Plus size={13} />
+                Add your first video
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
