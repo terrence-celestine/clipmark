@@ -185,6 +185,8 @@ export default function Watch() {
               onSeek={seekTo}
               onDelete={handleDeleteChapter}
               onEdit={setEditingChapter}
+              youtubeId={video.youtubeId}
+              videoTitle={video.title}
             />
           </div>
           {editingChapter && (

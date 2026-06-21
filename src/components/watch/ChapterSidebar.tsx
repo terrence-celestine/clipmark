@@ -1,5 +1,6 @@
-import { Check, Play, Edit2, Trash2 } from "lucide-react";
+import { Check, Play, Edit2, Trash2, Copy } from "lucide-react";
 import type { Chapter } from "../../types";
+import { useState } from "react";
 
 interface Props {
   chapters: Chapter[];
@@ -8,6 +9,8 @@ interface Props {
   onSeek: (timestamp: number) => void;
   onDelete: (id: number) => void;
   onEdit: (chapter: Chapter) => void;
+  youtubeId: string;
+  videoTitle: string;
 }
 
 function formatTime(seconds: number): string {
@@ -37,21 +40,54 @@ export default function ChapterSidebar({
   onSeek,
   onDelete,
   onEdit,
+  youtubeId,
+  videoTitle,
 }: Props) {
+  const [copied, setCopied] = useState(false);
   const activeIndex = chapters.reduce((acc, ch, i) => {
     return currentTime >= ch.timestamp ? i : acc;
   }, -1);
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
+  const handleExport = async () => {
+    const lines = chapters.map((ch) => {
+      const m = Math.floor(ch.timestamp / 60);
+      const s = String(ch.timestamp % 60).padStart(2, "0");
+      return `${m}:${s} — ${ch.title}`;
+    });
+    const text = [
+      `⏱ My chapters for "${videoTitle}"`,
+      `🔗 https://youtu.be/${youtubeId}`,
+      "",
+      lines.join("\n"),
+      "",
+      "Marked with ClipMark · clipmark.theteecee.dev",
+    ].join("\n");
+
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="px-4 py-3 border-b border-[#EFEFEF]">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[13px] font-medium text-[#111]">Chapters</span>
-          <span className="text-[11px] text-[#999]">
-            {chapters.length} saved
-          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleExport}
+              disabled={chapters.length === 0}
+              className="flex items-center gap-[4px] text-[11px] text-[#6366F1] hover:text-[#4F46E5] disabled:text-[#CCC] disabled:cursor-not-allowed transition-colors"
+            >
+              {copied ? <Check size={12} /> : <Copy size={12} />}
+              {copied ? "Copied!" : "Export"}
+            </button>
+            <span className="text-[11px] text-[#999]">
+              {chapters.length} saved
+            </span>
+          </div>
         </div>
         <div className="h-[2px] bg-[#F0F0F0] rounded-full">
           <div
@@ -119,7 +155,7 @@ export default function ChapterSidebar({
                   )}
                 </div>
                 {i < chapters.length - 1 && (
-                  <div className="w-[1px] bg-[#EFEFEF] flex-1 min-h-[12px]" />
+                  <div className="w-px bg-[#EFEFEF] flex-1 min-h-[12px]" />
                 )}
               </div>
 
