@@ -13,7 +13,10 @@ import {
   useImperativeHandle,
   forwardRef,
   useRef,
+  useEffect,
 } from "react";
+
+import { getSetting, setSetting } from "../../db/helpers";
 
 interface Props {
   videoId: string;
@@ -55,6 +58,13 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
     const [playing, setPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(startAt ?? 0);
     const [totalDuration, setTotalDuration] = useState(duration);
+    const [speed, setSpeed] = useState(1);
+
+    useEffect(() => {
+      getSetting("speed").then((value) => {
+        if (value) setSpeed(parseFloat(value));
+      });
+    }, []);
 
     useImperativeHandle(ref, () => ({
       seekTo: (seconds: number) => {
@@ -68,6 +78,14 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
         }
       },
     }));
+
+    const handleSpeedChange = async () => {
+      const speeds = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+      const currentIndex = speeds.indexOf(speed);
+      const nextSpeed = speeds[(currentIndex + 1) % speeds.length];
+      setSpeed(nextSpeed);
+      await setSetting("playbackSpeed", String(nextSpeed));
+    };
 
     const handleScrubberClick = (e: React.MouseEvent<HTMLDivElement>) => {
       const rect = e.currentTarget.getBoundingClientRect();
@@ -119,6 +137,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
             width="100%"
             height="100%"
             controls={false}
+            playbackRate={speed}
           />
         </div>
 
@@ -195,9 +214,12 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
 
             <div className="flex-1" />
 
-            <span className="text-[11px] font-mono text-[#666] bg-[#F5F5F5] border border-[#E8E8E8] px-[5px] py-px rounded">
-              1×
-            </span>
+            <button
+              onClick={handleSpeedChange}
+              className="text-[11px] font-mono text-[#666] bg-[#F5F5F5] border border-[#E8E8E8] px-[5px] py-[1px] rounded hover:bg-[#EBEBEB] transition-colors"
+            >
+              {speed}×
+            </button>
 
             <button className="text-[#888] hover:text-[#111] hidden md:flex">
               <Maximize size={14} />

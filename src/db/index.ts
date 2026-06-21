@@ -5,13 +5,15 @@ class ClipMarkDB extends Dexie {
   collections!: EntityTable<Collection, "id">;
   videos!: EntityTable<Video, "id">;
   chapters!: EntityTable<Chapter, "id">;
+  settings!: EntityTable<{ key: string; value: string }, "key">;
 
   constructor() {
     super("clipmark");
-    this.version(1).stores({
+    this.version(2).stores({
       collections: "++id, name, createdAt",
       videos: "++id, youtubeId, collectionId, createdAt, lastWatchedAt",
       chapters: "++id, videoId, timestamp, createdAt",
+      settings: "key",
     });
   }
 }

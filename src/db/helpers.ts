@@ -42,3 +42,13 @@ export const updateChapter = (id: number, changes: Partial<Chapter>) =>
   db.chapters.update(id, changes);
 
 export const deleteChapter = (id: number) => db.chapters.delete(id);
+
+// Settings
+export const getSetting = async (key: string): Promise<string | null> => {
+  const result = await db.settings.get(key);
+  return result?.value ?? null;
+};
+
+export const setSetting = async (key: string, value: string): Promise<void> => {
+  await db.settings.put({ key, value });
+};
