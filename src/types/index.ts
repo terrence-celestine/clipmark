@@ -26,3 +26,9 @@ export interface Chapter {
   note?: string;
   createdAt: number;
 }
+
+declare global {
+  interface Window {
+    onYouTubeIframeAPIReady: () => void;
+  }
+}
