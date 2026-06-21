@@ -1,4 +1,4 @@
-import { Bookmark, Search, Plus } from "lucide-react";
+import { Bookmark, Search } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import AddVideoModal from "../home/AddVideoModal";
