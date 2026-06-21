@@ -18,7 +18,7 @@ export default function ResumeBar({ video }: Props) {
   return (
     <div className="bg-white border border-[#E0E7FF] rounded-[10px] px-3 md:px-4 py-3 flex items-center gap-3 mb-4">
       <div
-        className="w-[56px] md:w-[68px] h-9 md:h-10 rounded-md flex items-center justify-center flex-shrink-0"
+        className="w-[56px] md:w-[68px] h-9 md:h-10 rounded-md flex items-center justify-center shrink-0"
         style={{ background: "#1e1b4b" }}
       >
         <div className="w-5 h-5 rounded-full border border-white/40 flex items-center justify-center">
@@ -33,7 +33,7 @@ export default function ResumeBar({ video }: Props) {
         <p className="text-[12px] font-medium text-[#111] truncate">
           {video.title}
         </p>
-        <p className="text-[11px] text-[#999] mt-[1px]">
+        <p className="text-[11px] text-[#999] mt-px">
           Stopped at {formatTimestamp(video.lastTimestamp ?? 0)}
         </p>
       </div>

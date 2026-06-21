@@ -5,7 +5,7 @@ import {
   RotateCcw,
   RotateCw,
   Maximize,
-  Volume2,
+  Bookmark,
 } from "lucide-react";
 import {
   useState,
@@ -140,7 +140,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
             />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={() => {
                 if (playerRef.current) {
@@ -155,7 +155,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
               }}
               className="text-[#555] hover:text-[#111]"
             >
-              <RotateCcw size={16} />
+              <RotateCcw size={15} />
             </button>
 
             <button
@@ -165,7 +165,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
               }}
               className="text-[#111]"
             >
-              {playing ? <Pause size={20} /> : <Play size={20} fill="#111" />}
+              {playing ? <Pause size={18} /> : <Play size={18} fill="#111" />}
             </button>
 
             <button
@@ -182,25 +182,30 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
               }}
               className="text-[#555] hover:text-[#111]"
             >
-              <RotateCw size={16} />
+              <RotateCw size={15} />
             </button>
+
             <span className="text-[11px] font-mono text-[#999]">
               {formatTime(currentTime)} / {formatTime(totalDuration)}
             </span>
+
             <div className="flex-1" />
-            <Volume2 size={14} color="#888" />
-            <span className="text-[11px] font-mono text-[#666] bg-[#F5F5F5] border border-[#E8E8E8] px-[6px] py-[2px] rounded">
+
+            <span className="text-[11px] font-mono text-[#666] bg-[#F5F5F5] border border-[#E8E8E8] px-[5px] py-px rounded">
               1×
             </span>
-            <button className="text-[#888] hover:text-[#111]">
+
+            <button className="text-[#888] hover:text-[#111] hidden md:flex">
               <Maximize size={14} />
             </button>
+
             <button
               onClick={() => onMarkChapter(currentTime)}
-              className="flex items-center gap-[5px] text-[12px] font-medium text-[#4F46E5] bg-[#EEF2FF] border border-[#C7D2FE] rounded-[7px] px-3 py-[5px] hover:bg-[#E0E7FF] transition-colors"
+              className="flex items-center gap-[4px] text-[11px] md:text-[12px] font-medium text-[#4F46E5] bg-[#EEF2FF] border border-[#C7D2FE] rounded-[7px] px-2 md:px-3 py-[5px] hover:bg-[#E0E7FF] transition-colors"
             >
-              Mark chapter
-              <span className="text-[10px] bg-[#C7D2FE] text-[#3730A3] px-[5px] py-px rounded font-mono">
+              <Bookmark size={12} />
+              <span className="hidden md:inline">Mark chapter</span>
+              <span className="hidden md:inline text-[10px] bg-[#C7D2FE] text-[#3730A3] px-[5px] py-px rounded font-mono">
                 T
               </span>
             </button>

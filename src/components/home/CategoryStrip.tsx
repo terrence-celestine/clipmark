@@ -34,7 +34,7 @@ export default function CategoryStrip({
   ];
 
   return (
-    <div className="flex gap-2 overflow-x-auto pb-[1px] scrollbar-none md:flex-wrap">
+    <div className="flex gap-2 overflow-x-auto pb-px scrollbar-none md:flex-wrap">
       {allFilters.map((filter) => (
         <button
           key={filter.id}

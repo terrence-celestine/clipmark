@@ -1,6 +1,11 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { ChevronRight, ExternalLink, MoreHorizontal } from "lucide-react";
+import {
+  ChevronRight,
+  ExternalLink,
+  MoreHorizontal,
+  ArrowLeft,
+} from "lucide-react";
 import { db } from "../db";
 import type { Video, Chapter } from "../types";
 import {
@@ -26,18 +31,15 @@ export default function Watch() {
   const [editingChapter, setEditingChapter] = useState<Chapter | null>(null);
 
   const playerRef = useRef<YouTubePlayerHandle>(null);
+
   const seekTo = useCallback((seconds: number) => {
-    console.log("Watch seekTo", seconds);
     playerRef.current?.seekTo(seconds);
   }, []);
 
-  useEffect(() => {
-    console.log("video changed", video?.id);
-  }, [video]);
-
-  useEffect(() => {
-    console.log("chapters changed", chapters.length);
-  }, [chapters]);
+  const chapterTimestamps = useMemo(
+    () => chapters.map((c) => c.timestamp),
+    [chapters],
+  );
 
   useEffect(() => {
     if (!videoId) return;
@@ -116,20 +118,21 @@ export default function Watch() {
     [],
   );
 
-  const chapterTimestamps = useMemo(
-    () => chapters.map((c) => c.timestamp),
-    [chapters],
-  );
-
   if (!video) return <div className="p-8 text-[#999]">Loading...</div>;
 
   return (
-    <div className="flex flex-col flex-1 overflow-hidden h-[calc(100vh-52px)]">
-      <div className="h-[44px] flex items-center px-5 gap-2 bg-white border-b border-[#EFEFEF] shrink-0">
-        <Link to="/" className="text-[12px] text-[#6366F1] hover:underline">
+    <div className="flex flex-col flex-1 overflow-hidden md:h-[calc(100vh-52px)]">
+      <div className="h-[44px] flex items-center px-4 gap-2 bg-white border-b border-[#EFEFEF] shrink-0">
+        <Link to="/" className="md:hidden text-[#888]">
+          <ArrowLeft size={18} />
+        </Link>
+        <Link
+          to="/"
+          className="hidden md:block text-[12px] text-[#6366F1] hover:underline"
+        >
           Library
         </Link>
-        <ChevronRight size={13} color="#CCC" />
+        <ChevronRight size={13} color="#CCC" className="hidden md:block" />
         <span className="text-[12px] text-[#111] font-medium truncate flex-1">
           {video.title}
         </span>
@@ -146,8 +149,8 @@ export default function Watch() {
         </button>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+      <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+        <div className="flex flex-col min-w-0 md:flex-1">
           <YouTubePlayer
             videoId={video.youtubeId}
             duration={video.duration}
@@ -157,21 +160,21 @@ export default function Watch() {
             onMarkChapter={handleMarkChapter}
             ref={playerRef}
           />
-          <div className="px-5 py-3 bg-white border-t border-[#EFEFEF]">
+          <div className="px-4 py-3 bg-white border-t border-[#EFEFEF] hidden md:block">
             <p className="text-[13px] font-medium text-[#111]">{video.title}</p>
             <p className="text-[11px] text-[#888] mt-1">{video.channelName}</p>
           </div>
         </div>
 
-        <div className="w-[272px] bg-white border-l border-[#EFEFEF] flex flex-col overflow-hidden">
+        <div className="flex-1 md:flex-none md:w-[272px] bg-white md:border-l border-t md:border-t-0 border-[#EFEFEF] flex flex-col overflow-hidden">
           <div className="flex-1 overflow-hidden flex flex-col">
             <ChapterSidebar
               chapters={chapters}
               currentTime={currentTime}
               duration={video.duration}
-              onSeek={(timestamp) => seekTo(timestamp)}
+              onSeek={seekTo}
               onDelete={handleDeleteChapter}
-              onEdit={(chapter) => setEditingChapter(chapter)}
+              onEdit={setEditingChapter}
             />
           </div>
           {editingChapter && (
@@ -185,7 +188,7 @@ export default function Watch() {
               onCancel={() => setEditingChapter(null)}
             />
           )}
-          {pendingTimestamp !== null && (
+          {pendingTimestamp !== null && !editingChapter && (
             <NewChapterForm
               timestamp={pendingTimestamp}
               onSave={handleSaveChapter}
