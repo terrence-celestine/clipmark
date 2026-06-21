@@ -26,17 +26,25 @@ export default function VideoCard({ video, chapterCount, onClick }: Props) {
       className="bg-white border border-[#EBEBEB] rounded-[10px] overflow-hidden cursor-pointer hover:border-[#C7D2FE] transition-colors"
     >
       <div
-        className="aspect-video relative flex items-center justify-center"
+        className="aspect-video relative flex items-center justify-center overflow-hidden"
         style={{ background: bgColor }}
       >
-        <div className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+        <img
+          src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
+          alt={video.title}
+          className="absolute inset-0 w-full h-full object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).style.display = "none";
+          }}
+        />
+        <div className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center relative z-10">
           <Play size={14} color="white" fill="white" />
         </div>
-        <span className="absolute bottom-2 right-2 text-[11px] font-mono text-white bg-black/55 px-[6px] py-[2px] rounded">
+        <span className="absolute bottom-2 right-2 z-10 text-[11px] font-mono text-white bg-black/55 px-[6px] py-[2px] rounded">
           {formatDuration(video.duration)}
         </span>
         {video.completed && (
-          <span className="absolute top-2 left-2 text-[10px] font-medium text-[#166534] bg-[#DCFCE7] border border-[#86EFAC] px-2 py-[2px] rounded-full">
+          <span className="absolute top-2 left-2 z-10 text-[10px] font-medium text-[#166534] bg-[#DCFCE7] border border-[#86EFAC] px-2 py-[2px] rounded-full">
             Done
           </span>
         )}
