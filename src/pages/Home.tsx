@@ -5,6 +5,7 @@ import {
   getVideos,
   getChaptersByVideo,
   updateVideo,
+  deleteVideo,
 } from "../db/helpers";
 import type { Collection, Video } from "../types";
 import CategoryStrip from "../components/home/CategoryStrip";
@@ -78,6 +79,12 @@ export default function Home() {
   const resumeVideo = videos.find(
     (v) => !v.completed && (v.lastTimestamp ?? 0) > 0,
   );
+
+  const handleDeleteVideo = async (video: Video) => {
+    if (!video.id) return;
+    await deleteVideo(video.id);
+    refreshVideos();
+  };
 
   const filteredVideos = videos.filter((v) => {
     if (activeFilter === "all") return true;
@@ -195,6 +202,7 @@ export default function Home() {
                 }
                 onClick={() => navigate(`/watch/${video.youtubeId}`)}
                 onToggleComplete={() => handleToggleComplete(video)}
+                onDelete={() => handleDeleteVideo(video)}
               />
             ))}
           </div>

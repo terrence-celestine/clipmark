@@ -6,9 +6,11 @@ import {
   Folder,
   MoreHorizontal,
   Play,
+  Trash2,
 } from "lucide-react";
 import type { Collection, Video } from "../../types";
 import { useState } from "react";
+import ConfirmModal from "../ui/ConfirmationModal";
 
 interface Props {
   video: Video;
@@ -17,6 +19,7 @@ interface Props {
   onMoveToCollection: (collectionId: number | undefined) => void;
   onClick: () => void;
   onToggleComplete: () => void;
+  onDelete: () => void;
 }
 
 const THUMB_COLORS: Record<number, string> = {
@@ -35,11 +38,14 @@ export default function VideoCard({
   onToggleComplete,
   collections,
   onMoveToCollection,
+  onDelete,
 }: Props) {
   const colorIndex = video.id ? video.id % 6 : 0;
   const bgColor = THUMB_COLORS[colorIndex];
   const [menuOpen, setMenuOpen] = useState(false);
   const [showCollections, setShowCollections] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+
   return (
     <div
       onClick={onClick}
@@ -99,6 +105,16 @@ export default function VideoCard({
                   className="absolute right-0 bottom-7 bg-white border border-[#E8E8E8] rounded-[8px] shadow-sm py-1 w-[160px] z-10"
                   onClick={(e) => e.stopPropagation()}
                 >
+                  <button
+                    onClick={() => {
+                      setShowConfirmationModal(true);
+                      setMenuOpen(false);
+                    }}
+                    className="w-full text-left text-[12px] text-red-500 px-3 py-[7px] hover:bg-red-50 flex items-center gap-2"
+                  >
+                    <Trash2 size={13} />
+                    Delete video
+                  </button>
                   <button
                     onClick={() => {
                       onToggleComplete();
@@ -165,6 +181,17 @@ export default function VideoCard({
           </div>
         </div>
       </div>
+      {showConfirmationModal && (
+        <ConfirmModal
+          title="Delete video"
+          description={`"${video.title}" and all its chapters will be permanently deleted.`}
+          onConfirm={() => {
+            onDelete();
+            setShowConfirmationModal(false);
+          }}
+          onCancel={() => setShowConfirmationModal(false)}
+        />
+      )}
     </div>
   );
 }

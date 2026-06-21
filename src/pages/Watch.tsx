@@ -5,6 +5,7 @@ import {
   ExternalLink,
   MoreHorizontal,
   ArrowLeft,
+  Trash2,
 } from "lucide-react";
 import { db } from "../db";
 import type { Video, Chapter } from "../types";
@@ -14,12 +15,14 @@ import {
   addChapter,
   deleteChapter,
   updateChapter,
+  deleteVideo,
 } from "../db/helpers";
 import YouTubePlayer, {
   type YouTubePlayerHandle,
 } from "../components/watch/YouTubePlayer";
 import ChapterSidebar from "../components/watch/ChapterSidebar";
 import NewChapterForm from "../components/watch/NewChapterForm";
+import ConfirmModal from "../components/ui/ConfirmationModal";
 
 export default function Watch() {
   const { videoId } = useParams<{ videoId: string }>();
@@ -29,6 +32,8 @@ export default function Watch() {
   const [currentTime, setCurrentTime] = useState(0);
   const [pendingTimestamp, setPendingTimestamp] = useState<number | null>(null);
   const [editingChapter, setEditingChapter] = useState<Chapter | null>(null);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   const playerRef = useRef<YouTubePlayerHandle>(null);
 
@@ -127,6 +132,12 @@ export default function Watch() {
     [video],
   );
 
+  const handleDeleteVideo = async () => {
+    if (!video?.id) return;
+    await deleteVideo(video.id);
+    navigate("/");
+  };
+
   if (!video) return <div className="p-8 text-[#999]">Loading...</div>;
 
   return (
@@ -153,9 +164,31 @@ export default function Watch() {
         >
           <ExternalLink size={14} />
         </a>
-        <button className="text-[#888] hover:text-[#555]">
-          <MoreHorizontal size={16} />
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setShowMenu((m) => !m)}
+            className="text-[#888] hover:text-[#555]"
+          >
+            <MoreHorizontal size={16} />
+          </button>
+          {showMenu && (
+            <div
+              className="absolute right-0 top-7 bg-white border border-[#E8E8E8] rounded-[8px] shadow-sm py-1 w-[160px] z-10"
+              onClick={() => setShowMenu(false)}
+            >
+              <button
+                onClick={() => {
+                  setShowConfirmationModal(true);
+                  setShowMenu(false);
+                }}
+                className="w-full text-left text-[12px] text-red-500 px-3 py-[7px] hover:bg-red-50 flex items-center gap-2"
+              >
+                <Trash2 size={13} />
+                Delete video
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
@@ -205,6 +238,14 @@ export default function Watch() {
               timestamp={pendingTimestamp}
               onSave={handleSaveChapter}
               onCancel={() => setPendingTimestamp(null)}
+            />
+          )}
+          {showConfirmationModal && (
+            <ConfirmModal
+              title="Delete video"
+              description={`"${video.title}" and all its chapters will be permanently deleted.`}
+              onConfirm={() => handleDeleteVideo()}
+              onCancel={() => setShowConfirmationModal(false)}
             />
           )}
         </div>
