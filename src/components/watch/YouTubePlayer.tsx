@@ -52,7 +52,6 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
     const playerRef = useRef<HTMLVideoElement>(null);
     const [playing, setPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(startAt ?? 0);
-    const [_, setSeekTo] = useState<number | undefined>(undefined);
     const [totalDuration, setTotalDuration] = useState(duration);
 
     useImperativeHandle(ref, () => ({
@@ -160,6 +159,16 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
             </button>
 
             <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setPlaying((p) => !p);
+              }}
+              className="text-[#111]"
+            >
+              {playing ? <Pause size={20} /> : <Play size={20} fill="#111" />}
+            </button>
+
+            <button
               onClick={() => {
                 if (playerRef.current) {
                   seekingRef.current = true;
@@ -171,12 +180,6 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
                   }, 1000);
                 }
               }}
-              className="text-[#555] hover:text-[#111]"
-            >
-              {playing ? <Pause size={16} /> : <Play size={16} />}
-            </button>
-            <button
-              onClick={() => setSeekTo(currentTime + 10)}
               className="text-[#555] hover:text-[#111]"
             >
               <RotateCw size={16} />
@@ -197,7 +200,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
               className="flex items-center gap-[5px] text-[12px] font-medium text-[#4F46E5] bg-[#EEF2FF] border border-[#C7D2FE] rounded-[7px] px-3 py-[5px] hover:bg-[#E0E7FF] transition-colors"
             >
               Mark chapter
-              <span className="text-[10px] bg-[#C7D2FE] text-[#3730A3] px-[5px] py-[1px] rounded font-mono">
+              <span className="text-[10px] bg-[#C7D2FE] text-[#3730A3] px-[5px] py-px rounded font-mono">
                 T
               </span>
             </button>
