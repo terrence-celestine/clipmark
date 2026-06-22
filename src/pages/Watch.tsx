@@ -76,6 +76,45 @@ export default function Watch() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentTime]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+
+      console.log("pressed", e.key);
+
+      switch (e.key) {
+        case "t":
+        case "T":
+          e.preventDefault();
+          setPendingTimestamp(currentTime);
+          break;
+        case " ":
+          e.preventDefault();
+          playerRef.current?.togglePlay();
+          break;
+        case "ArrowLeft":
+          e.preventDefault();
+          playerRef.current?.skip(-10);
+          break;
+        case "ArrowRight":
+          e.preventDefault();
+          playerRef.current?.skip(10);
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          playerRef.current?.adjustSpeed(1);
+          break;
+        case "ArrowDown":
+          e.preventDefault();
+          playerRef.current?.adjustSpeed(-1);
+          break;
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentTime]);
+
   const refreshChapters = async () => {
     if (!video?.id) return;
     const chs = await getChaptersByVideo(video.id);

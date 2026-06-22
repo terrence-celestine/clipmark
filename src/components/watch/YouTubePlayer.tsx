@@ -30,6 +30,9 @@ interface Props {
 
 export interface YouTubePlayerHandle {
   seekTo: (seconds: number) => void;
+  togglePlay: () => void;
+  skip: (seconds: number) => void;
+  adjustSpeed: (speed: number) => void;
 }
 
 function formatTime(seconds: number): string {
@@ -59,11 +62,22 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
     const [currentTime, setCurrentTime] = useState(startAt ?? 0);
     const [totalDuration, setTotalDuration] = useState(duration);
     const [speed, setSpeed] = useState(1);
+    const speeds = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
     useEffect(() => {
       getSetting("speed").then((value) => {
         if (value) setSpeed(parseFloat(value));
       });
+    }, []);
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        if (document.activeElement?.tagName === "IFRAME") {
+          (document.activeElement as HTMLElement).blur();
+          window.focus();
+        }
+      }, 200);
+      return () => clearInterval(interval);
     }, []);
 
     useImperativeHandle(ref, () => ({
@@ -76,6 +90,33 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
             seekingRef.current = false;
           }, 1000);
         }
+      },
+      togglePlay: () => {
+        setPlaying((p) => !p);
+        (document.activeElement as HTMLElement)?.blur();
+      },
+      skip: (seconds: number) => {
+        if (playerRef.current) {
+          seekingRef.current = true;
+          const t = currentTime + seconds;
+          playerRef.current.currentTime = t;
+          setCurrentTime(t);
+          setTimeout(() => {
+            seekingRef.current = false;
+          }, 1000);
+        }
+      },
+      adjustSpeed: (direction: number) => {
+        setSpeed((s) => {
+          const currentIndex = speeds.indexOf(s);
+          const nextIndex = Math.max(
+            0,
+            Math.min(speeds.length - 1, currentIndex + direction),
+          );
+          const nextSpeed = speeds[nextIndex];
+          setSetting("playbackSpeed", String(nextSpeed));
+          return nextSpeed;
+        });
       },
     }));
 
@@ -121,6 +162,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
         <div
           className="bg-black w-full"
           style={{ aspectRatio: "16/9", maxHeight: "calc(100vh - 200px)" }}
+          onClick={() => (document.activeElement as HTMLElement)?.blur()}
         >
           <ReactPlayer
             ref={playerRef}
@@ -185,6 +227,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, Props>(
               onClick={(e) => {
                 e.stopPropagation();
                 setPlaying((p) => !p);
+                (document.activeElement as HTMLElement)?.blur();
               }}
               className="text-[#111]"
             >

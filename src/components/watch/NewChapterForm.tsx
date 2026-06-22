@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
 
 interface Props {
@@ -43,6 +43,16 @@ export default function NewChapterForm({
     if (e.key === "Escape") onCancel();
   };
 
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const input = document.querySelector<HTMLInputElement>(
+        "input[name='title']",
+      );
+      input?.focus();
+    }, 50);
+    return () => clearTimeout(t);
+  }, [timestamp]);
+
   return (
     <div className="border-t border-[#EFEFEF] px-3 py-3 bg-[#FAFAFA]">
       <div className="flex items-center gap-2 mb-2">
@@ -55,7 +65,8 @@ export default function NewChapterForm({
 
       <div className="flex flex-col gap-[6px]">
         <input
-          autoFocus
+          autoFocus={timestamp !== null}
+          name="title"
           type="text"
           placeholder="Chapter title..."
           value={title}
